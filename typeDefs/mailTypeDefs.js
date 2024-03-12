@@ -1,3 +1,6 @@
+const gql = require('graphql-tag')
+
+const mailTypeDefs = gql`
 type Mail {
   id: ID!
   sender: String!
@@ -20,3 +23,7 @@ type Query {
 type Mutation {
   createMail(input: CreateMailInput!): Mail!
 }
+
+`
+
+module.exports = mailTypeDefs
