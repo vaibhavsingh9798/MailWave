@@ -6,13 +6,11 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config()
 
-
-// Import typeDefs and resolvers
 const userTypeDefs = fs.readFileSync(path.join(__dirname, 'typeDefs/userTypeDefs.graphql'), 'utf-8');
 const mailTypeDefs = fs.readFileSync(path.join(__dirname, 'typeDefs/mailTypeDefs.graphql'), 'utf-8');
 const userResolver = require('./resolvers/userResolver');
 const mailResolver = require('./resolvers/mailResolver');
-
+const authenticateUser = require('./middleware/auth');
 const PORT = process.env.PORT || 80002
 
 const app = express()
@@ -23,7 +21,11 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 async function startServer(){
     const server = new ApolloServer({
         typeDefs: [userTypeDefs,mailTypeDefs],
-        resolvers: [userResolver,mailResolver]
+        resolvers: [userResolver,mailResolver],
+        context: async ({ req }) => {
+            await authenticateUser(req);
+            return { user: req.user };
+          },
       })
 
     await server.start()

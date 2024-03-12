@@ -2,17 +2,26 @@ type User {
   id: ID!
   username: String!
   email: String!
+  password: String!
 }
 
-input CreateUserInput {
+input SignupInput {
   username: String!
   email: String!
+  password: String!
 }
 
-type Query {
-  getAllUsers: [User!]!
+input LoginInput {
+  email: String!
+  password: String!
 }
 
-type Mutation {
-  createUser(input: CreateUserInput!): User!
+type AuthPayload {
+  token: String!
+  user: User!
+}
+
+extend type Mutation {
+  signup(input: SignupInput!): AuthPayload!
+  login(input: LoginInput!): AuthPayload!
 }
