@@ -1,30 +1,30 @@
 const express = require('express')
+const mongoose = require('mongoose')
 const {ApolloServer} = require('@apollo/server')
 const {expressMiddleware} = require('@apollo/server/express4')
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config()
+
+
+// Import typeDefs and resolvers
+const userTypeDefs = fs.readFileSync(path.join(__dirname, 'typeDefs/userTypeDefs.graphql'), 'utf-8');
+const mailTypeDefs = fs.readFileSync(path.join(__dirname, 'typeDefs/mailTypeDefs.graphql'), 'utf-8');
+const userResolver = require('./resolvers/userResolver');
+const mailResolver = require('./resolvers/mailResolver');
+
 const PORT = process.env.PORT || 80002
 
 const app = express()
 app.use(express.json())
 
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+
 async function startServer(){
     const server = new ApolloServer({
-        typeDefs:`
-        type Todo{
-            id: ID!
-            title: String!
-        }
-
-        type Query {
-            getTodos : [Todo]
-        }
-        `,
-        resolvers:{
-            Query :{
-                getTodos : () => [{id:1,title:'my name is vaibhav'}]
-            }
-        }
-    })
+        typeDefs: [userTypeDefs,mailTypeDefs],
+        resolvers: [userResolver,mailResolver]
+      })
 
     await server.start()
 
