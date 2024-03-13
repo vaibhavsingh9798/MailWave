@@ -2,7 +2,7 @@ const gql = require('graphql-tag')
 
 const mailTypeDefs = gql`
 type Mail {
-  id: ID!
+  id: ID
   sender: String!
   recipient: String!
   subject: String!
