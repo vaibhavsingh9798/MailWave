@@ -1,41 +1,35 @@
 const {Worker} = require('bullmq');
-const nodemailer = require('nodemailer')
+const SibApiV3Sdk = require('sib-api-v3-sdk')
 
-const transporter = nodemailer.createTransport({
-    host: "smtp.ethereal.email",
-    port: 587,
-    secure: false,
-    auth: {
-      user: process.env.USER,
-      pass: process.env.APP_PASSWORD
-    },
-  });
+// if want then send mail from heare 
+// async function sendMail(data){
 
+//   const {sender, recipient, subject, body  } = data
+//   var defaultClient = SibApiV3Sdk.ApiClient.instance; 
+//   var apiKey = defaultClient.authentications['api-key'];
+//   apiKey.apiKey = process.env.API_KEY
 
-async function sendEmail(job) {
-    const { sender , recipient , subject, body } = job.data;
-    console.log('revied info',sender , recipient , subject, body)
-
-      var mailOptions = {
-        from: sender,
-        to: recipient,
-        subject,
-        text: body
-      };
-      try{
-        const info = await transporter.sendMail(mailOptions);
-          console.log("Message sent: %s", info.messageId);
-      }catch(err){
-        console.log('err...',err)
-      }
-      
-     }
   
+//   let tranEmailApi = new SibApiV3Sdk.TransactionalEmailsApi()
 
+
+//      try{
+//     let respemail = await tranEmailApi.sendTransacEmail({
+//       sender,
+//       to: recipient,
+//       subject: subject,
+//       textContent: body
+//      })
+//     }
+// catch(err){
+//  console.log('something wrong with email send',err)
+// }
+// }
+  
 const worker = new Worker("email-queue", async (job)=>{
-
-    console.log(`worker working on ${job.id}`)
-    await sendEmail(job)
+    console.log(`worker working on ${job.id} with ${job.data.sender}`)
+    //await sendMail(job.data)
+  
 },
 { connection: {
     host: 'localhost',
@@ -44,3 +38,4 @@ const worker = new Worker("email-queue", async (job)=>{
     }
 
 )
+

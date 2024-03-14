@@ -12,4 +12,5 @@ async function addEmailQueue(data){
 }
 
 
-module.exports = {addEmailQueue}
+
+ module.exports = {addEmailQueue}
